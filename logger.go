@@ -67,7 +67,7 @@ func (l *logger) Println(v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds)
+		l.logger = log.New(io.MultiWriter(os.Stdout, file), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Println(v...)
 }
@@ -78,7 +78,7 @@ func (l *logger) Printf(format string, v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds)
+		l.logger = log.New(io.MultiWriter(os.Stdout, file), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Printf(format, v...)
 }
