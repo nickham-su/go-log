@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	Debug   *logger
 	Info    *logger
 	Warning *logger
 	Error   *logger
@@ -30,6 +31,7 @@ func init() {
 
 func createLogger() {
 	dateStr = time.Now().Format("2006-01-02")
+	Debug = newLogger(dirPath + dateStr + ".debug.log")
 	Info = newLogger(dirPath + dateStr + ".info.log")
 	Warning = newLogger(dirPath + dateStr + ".warning.log")
 	Error = newLogger(dirPath + dateStr + ".error.log")
@@ -65,7 +67,7 @@ func (l *logger) Println(v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Println(v...)
 }
@@ -76,7 +78,7 @@ func (l *logger) Printf(format string, v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds|log.Lshortfile)
+		l.logger = log.New(io.MultiWriter(os.Stderr, file), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Printf(format, v...)
 }
