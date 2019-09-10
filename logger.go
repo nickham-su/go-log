@@ -14,6 +14,7 @@ var (
 	Error   *logger
 	dateStr string
 	dirPath string
+	stdout  bool
 )
 
 func init() {
@@ -35,6 +36,10 @@ func createLogger() {
 	Info = newLogger(dirPath + dateStr + ".info.log")
 	Warning = newLogger(dirPath + dateStr + ".warning.log")
 	Error = newLogger(dirPath + dateStr + ".error.log")
+}
+
+func SetStdout(out bool) {
+	stdout = out
 }
 
 func SetDir(path string) {
@@ -67,7 +72,11 @@ func (l *logger) Println(v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stdout, file), "", log.Ldate|log.Lmicroseconds)
+		writer := []io.Writer{file}
+		if stdout {
+			writer = append(writer, os.Stdout)
+		}
+		l.logger = log.New(io.MultiWriter(writer...), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Println(v...)
 }
@@ -78,7 +87,11 @@ func (l *logger) Printf(format string, v ...interface{}) {
 		if err != nil {
 			log.Fatalln("打开日志文件失败：", err)
 		}
-		l.logger = log.New(io.MultiWriter(os.Stdout, file), "", log.Ldate|log.Lmicroseconds)
+		writer := []io.Writer{file}
+		if stdout {
+			writer = append(writer, os.Stdout)
+		}
+		l.logger = log.New(io.MultiWriter(writer...), "", log.Ldate|log.Lmicroseconds)
 	}
 	l.logger.Printf(format, v...)
 }
