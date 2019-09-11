@@ -7,6 +7,15 @@ import (
 	"time"
 )
 
+type logLevel int
+
+const (
+	levelDebug logLevel = iota
+	levelInfo
+	levelWarning
+	levelError
+)
+
 var (
 	Debug   *logger
 	Info    *logger
@@ -32,10 +41,10 @@ func init() {
 
 func createLogger() {
 	dateStr = time.Now().Format("2006-01-02")
-	Debug = newLogger(dirPath + dateStr + ".debug.log")
-	Info = newLogger(dirPath + dateStr + ".info.log")
-	Warning = newLogger(dirPath + dateStr + ".warning.log")
-	Error = newLogger(dirPath + dateStr + ".error.log")
+	Debug = newLogger(levelDebug, dirPath+dateStr+".debug.log")
+	Info = newLogger(levelInfo, dirPath+dateStr+".info.log")
+	Warning = newLogger(levelWarning, dirPath+dateStr+".warning.log")
+	Error = newLogger(levelError, dirPath+dateStr+".error.log")
 }
 
 func AppendWriter(writer ...io.Writer) {
@@ -54,16 +63,18 @@ func SetDir(path string) {
 	createLogger()
 }
 
-func newLogger(fileName string) *logger {
+func newLogger(level logLevel, fileName string) *logger {
 	return &logger{
 		logger:   nil,
 		fileName: fileName,
+		level:    level,
 	}
 }
 
 type logger struct {
 	logger   *log.Logger
 	fileName string
+	level    logLevel
 }
 
 func (l *logger) Println(v ...interface{}) {
@@ -74,6 +85,16 @@ func (l *logger) Println(v ...interface{}) {
 		}
 		w := append(writers, file)
 		l.logger = log.New(io.MultiWriter(w...), "", log.Ldate|log.Lmicroseconds)
+	}
+	switch l.level {
+	case levelDebug:
+		v = append([]interface{}{"DEBUG"}, v...)
+	case levelInfo:
+		v = append([]interface{}{"INFO"}, v...)
+	case levelWarning:
+		v = append([]interface{}{"WARNING"}, v...)
+	case levelError:
+		v = append([]interface{}{"ERROR"}, v...)
 	}
 	l.logger.Println(v...)
 }
@@ -86,6 +107,16 @@ func (l *logger) Printf(format string, v ...interface{}) {
 		}
 		w := append(writers, file)
 		l.logger = log.New(io.MultiWriter(w...), "", log.Ldate|log.Lmicroseconds)
+	}
+	switch l.level {
+	case levelDebug:
+		format = "DEBUG " + format
+	case levelInfo:
+		format = "INFO " + format
+	case levelWarning:
+		format = "WARNING " + format
+	case levelError:
+		format = "ERROR " + format
 	}
 	l.logger.Printf(format, v...)
 }
