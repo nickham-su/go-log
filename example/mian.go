@@ -1,8 +1,12 @@
 package main
 
-import "github.com/nickham-su/go-logger"
+import (
+	"github.com/nickham-su/go-logger"
+	"os"
+)
 
 func main() {
+	logger.AppendWriter(os.Stdout)
 	logger.SetDir("logs")
 	logger.Debug.Println("debug")
 	logger.Info.Println("info")
