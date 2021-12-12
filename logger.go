@@ -120,3 +120,13 @@ func (l *logger) Printf(format string, v ...interface{}) {
 	}
 	l.logger.Printf(format, v...)
 }
+
+func (l *logger) Fatalln(v ...interface{}) {
+	l.Println(v...)
+	os.Exit(1)
+}
+
+func (l *logger) Fatalf(format string, v ...interface{}) {
+	l.Printf(format, v...)
+	os.Exit(1)
+}
