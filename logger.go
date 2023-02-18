@@ -110,13 +110,13 @@ func (l *logger) Printf(format string, v ...interface{}) {
 	}
 	switch l.level {
 	case levelDebug:
-		format = "DEBUG " + format
+		format = "DEBUG " + format + "\n"
 	case levelInfo:
-		format = "INFO " + format
+		format = "INFO " + format + "\n"
 	case levelWarning:
-		format = "WARNING " + format
+		format = "WARNING " + format + "\n"
 	case levelError:
-		format = "ERROR " + format
+		format = "ERROR " + format + "\n"
 	}
 	l.logger.Printf(format, v...)
 }
