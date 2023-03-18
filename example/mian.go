@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nickham-su/go-logger"
+	"github.com/nickham-su/go_logger"
 	"os"
 )
 
