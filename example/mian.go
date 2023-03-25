@@ -16,5 +16,6 @@ func main() {
 	logger.Info.Printf("info %v", 2)
 	logger.Warning.Printf("warning %v", 3)
 	logger.Error.Printf("error %v", 4)
-	logger.Error.Fatalln("Fatalln")
+	//logger.Error.Fatalln("Fatalln")
+	logger.Error.Fatalf("Fatalf %v", "exit")
 }

@@ -20,7 +20,7 @@ var (
 	Debug   *logger
 	Info    *logger
 	Warning *logger
-	Error   *logger
+	Error   *errorLogger
 	dateStr string
 	dirPath string
 	writers []io.Writer
@@ -44,7 +44,7 @@ func createLogger() {
 	Debug = newLogger(levelDebug, dirPath+dateStr+".debug.log")
 	Info = newLogger(levelInfo, dirPath+dateStr+".info.log")
 	Warning = newLogger(levelWarning, dirPath+dateStr+".warning.log")
-	Error = newLogger(levelError, dirPath+dateStr+".error.log")
+	Error = newErrorLogger(levelError, dirPath+dateStr+".error.log")
 }
 
 func AppendWriter(writer ...io.Writer) {
@@ -58,7 +58,7 @@ func SetDir(path string) {
 	if path[len(path)-1:] != "/" {
 		path += "/"
 	}
-	os.Mkdir(path, os.ModePerm)
+	_ = os.Mkdir(path, os.ModePerm)
 	dirPath = path
 	createLogger()
 }
@@ -121,12 +121,34 @@ func (l *logger) Printf(format string, v ...interface{}) {
 	l.logger.Printf(format, v...)
 }
 
-func (l *logger) Fatalln(v ...interface{}) {
-	l.Println(v...)
+func newErrorLogger(level logLevel, fileName string) *errorLogger {
+	return &errorLogger{
+		logger{
+			logger:   nil,
+			fileName: fileName,
+			level:    level,
+		},
+	}
+}
+
+type errorLogger struct {
+	logger
+}
+
+func (l *errorLogger) Println(v ...interface{}) {
+	l.logger.Println(v...)
+}
+
+func (l *errorLogger) Printf(format string, v ...interface{}) {
+	l.logger.Printf(format, v...)
+}
+
+func (l *errorLogger) Fatalln(v ...interface{}) {
+	l.logger.Println(v...)
 	os.Exit(1)
 }
 
-func (l *logger) Fatalf(format string, v ...interface{}) {
-	l.Printf(format, v...)
+func (l *errorLogger) Fatalf(format string, v ...interface{}) {
+	l.logger.Printf(format, v...)
 	os.Exit(1)
 }
